@@ -5,7 +5,7 @@ import java.util.Collection;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import com.radiusnetworks.ibeacon.IBeacon;
 import com.radiusnetworks.ibeacon.IBeaconConsumer;
@@ -14,6 +14,9 @@ import com.radiusnetworks.ibeacon.RangeNotifier;
 import com.radiusnetworks.ibeacon.Region;
 
 public class RangingActivity extends Activity implements IBeaconConsumer {
+	
+	private static int numTokens = 5;
+	
 	protected static final String TAG = "RangingActivity";
 	private IBeaconManager iBeaconManager = IBeaconManager
 			.getInstanceForApplication(this);
@@ -52,8 +55,6 @@ public class RangingActivity extends Activity implements IBeaconConsumer {
 			public void didRangeBeaconsInRegion(Collection<IBeacon> iBeacons,
 					Region region) {
 				if (iBeacons.size() > 0) {
-					EditText editText = (EditText) RangingActivity.this
-							.findViewById(R.id.rangingText);
 					IBeacon next = iBeacons.iterator().next();
 					logToDisplay("The first iBeacon I see is about "
 							+ next.getAccuracy()
@@ -61,7 +62,15 @@ public class RangingActivity extends Activity implements IBeaconConsumer {
 							+ " txpower:" + next.getTxPower()
 							+ " prox:" + next.getProximity()
 							);
+					
+					--numTokens;
 				}
+				
+				 for (IBeacon beacon : iBeacons) {
+					 if (beacon.getMinor() == 1) {
+						 // TODO: print something about current station
+					 }
+				 }
 			}
 
 		});
@@ -76,9 +85,9 @@ public class RangingActivity extends Activity implements IBeaconConsumer {
 	private void logToDisplay(final String line) {
 		runOnUiThread(new Runnable() {
 			public void run() {
-				EditText editText = (EditText) RangingActivity.this
+				TextView tokens_remaining = (TextView) RangingActivity.this
 						.findViewById(R.id.rangingText);
-				editText.append(line + "\n");
+				tokens_remaining.setText(numTokens + " tokens remaining");
 			}
 		});
 	}

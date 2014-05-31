@@ -1,26 +1,37 @@
 package com.twyngle.hermes;
 
-import com.paypal.android.sdk.payments.PayPalAuthorization;
-import com.paypal.android.sdk.payments.PayPalConfiguration;
-import com.paypal.android.sdk.payments.PayPalFuturePaymentActivity;
-import com.paypal.android.sdk.payments.PayPalItem;
-import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalPaymentDetails;
-import com.paypal.android.sdk.payments.PayPalService;
-import com.paypal.android.sdk.payments.PaymentActivity;
-import com.paypal.android.sdk.payments.PaymentConfirmation;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
+import java.math.BigDecimal;
+import java.util.Collection;
 
 import org.json.JSONException;
 
-import java.math.BigDecimal;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.RemoteException;
+import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.paypal.android.sdk.payments.PayPalAuthorization;
+import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalFuturePaymentActivity;
+import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
+import com.radiusnetworks.ibeacon.IBeacon;
+import com.radiusnetworks.ibeacon.IBeaconConsumer;
+import com.radiusnetworks.ibeacon.IBeaconManager;
+import com.radiusnetworks.ibeacon.RangeNotifier;
+import com.radiusnetworks.ibeacon.Region;
 
 /**
  * Basic sample using the SDK to make a payment or consent to future payments.
@@ -29,7 +40,7 @@ import java.math.BigDecimal;
  * https://github.com/paypal/rest-api
  * -sdk-python/tree/master/samples/mobile_backend
  */
-public class SampleActivity extends Activity {
+public class SampleActivity extends Activity implements IBeaconConsumer {
 	private static final String TAG = "paymentExample";
 
 	/**
@@ -47,7 +58,6 @@ public class SampleActivity extends Activity {
 
 	// note that these credentials will differ between live & sandbox
 	// environments.
-
 	private static final int REQUEST_CODE_PAYMENT = 1;
 	private static final int REQUEST_CODE_FUTURE_PAYMENT = 2;
 
@@ -55,64 +65,41 @@ public class SampleActivity extends Activity {
 			.environment(_CONFIG_ENVIRONMENT_).clientId(_CONFIG_CLIENT_ID_)
 			// The following are only used in PayPalFuturePaymentActivity.
 			.merchantName("hermes")
-			// TODO add privacy policy and user agreements Uri
 			.merchantPrivacyPolicyUri(Uri.parse("http://hermes.ngrok.com/"))
 			.merchantUserAgreementUri(Uri.parse("http://hermes.ngrok.com/"));
+	
+	private IBeaconManager iBeaconManager = IBeaconManager
+			.getInstanceForApplication(this);
+	
+	private TextView textview;
+	private LinearLayout layout;
+	private static int numTokens = 200;
+	
+	private static long timestamp = -1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		layout = (LinearLayout) this.findViewById(R.id.wrapper);
+		textview = (TextView) this.findViewById(R.id.numTokensText);
+		textview.setText(getResources()
+				.getQuantityString(
+						R.plurals.num_tokens_remaining,
+						numTokens,
+						numTokens));
 
+		iBeaconManager.bind(this);
+		
 		Intent intent = new Intent(this, PayPalService.class);
 		intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
 		startService(intent);
 	}
 
-	public void onBuyPressed(View pressed) {
-		/*
-		 * PAYMENT_INTENT_SALE will cause the payment to complete immediately.
-		 * Change PAYMENT_INTENT_SALE to PAYMENT_INTENT_AUTHORIZE to only
-		 * authorize payment and capture funds later.
-		 * 
-		 * Also, to include additional payment details and an item list, see
-		 * getStuffToBuy() below.
-		 */
-		PayPalPayment thingToBuy = getThingToBuy(PayPalPayment.PAYMENT_INTENT_SALE);
-
-		Intent intent = new Intent(SampleActivity.this, PaymentActivity.class);
-
-		intent.putExtra(PaymentActivity.EXTRA_PAYMENT, thingToBuy);
-
-		startActivityForResult(intent, REQUEST_CODE_PAYMENT);
-	}
-
 	private PayPalPayment getThingToBuy(String paymentIntent) {
-		return new PayPalPayment(new BigDecimal("3.00"), "CAD",
-				"TTC fare", paymentIntent);
-	}
-
-	/*
-	 * This method shows use of optional payment details and item list.
-	 */
-	private PayPalPayment getStuffToBuy(String paymentIntent) {
-		PayPalItem[] items = {
-				new PayPalItem("old jeans with holes", 2, new BigDecimal(
-						"87.50"), "USD", "sku-12345678"),
-				new PayPalItem("free rainbow patch", 1, new BigDecimal("0.00"),
-						"USD", "sku-zero-price"),
-				new PayPalItem(
-						"long sleeve plaid shirt (no mustache included)", 6,
-						new BigDecimal("37.99"), "USD", "sku-33333") };
-		BigDecimal subtotal = PayPalItem.getItemTotal(items);
-		BigDecimal shipping = new BigDecimal("7.21");
-		BigDecimal tax = new BigDecimal("4.67");
-		PayPalPaymentDetails paymentDetails = new PayPalPaymentDetails(
-				shipping, subtotal, tax);
-		BigDecimal amount = subtotal.add(shipping).add(tax);
-		PayPalPayment payment = new PayPalPayment(amount, "USD",
-				"hipster jeans", paymentIntent);
-		return payment.items(items).paymentDetails(paymentDetails);
+		return new PayPalPayment(new BigDecimal("3.00"), "CAD", "TTC fare",
+				paymentIntent);
 	}
 
 	public void onFuturePaymentPressed(View pressed) {
@@ -204,12 +191,24 @@ public class SampleActivity extends Activity {
 		 * 
 		 * A more complete example that includes the required app-server to
 		 * PayPal-server integration is available from
-		 * https://github.com/paypal/rest-api-sdk-python/tree/master/samples/mobile_backend
+		 * https://github.com/paypal/
+		 * rest-api-sdk-python/tree/master/samples/mobile_backend
 		 */
-		System.out.println("(pchan) here's something about auth code:" + 
-		 authorization.getAuthorizationCode());
-		
-		
+		System.out.println("(pchan) here's something about auth code:"
+				+ authorization.getAuthorizationCode());
+
+		RequestParams params = new RequestParams("auth_code",
+				authorization.getAuthorizationCode());
+
+		AsyncHttpClient client = new AsyncHttpClient();
+		client.post("http://hermes.ngrok.com/paypal/consent", params,
+				new AsyncHttpResponseHandler() {
+					@Override
+					public void onSuccess(String response) {
+						// This should be a stringified Json object
+						System.out.println(response);
+					}
+				});
 
 	}
 
@@ -233,5 +232,78 @@ public class SampleActivity extends Activity {
 		// Stop service when done
 		stopService(new Intent(this, PayPalService.class));
 		super.onDestroy();
+		iBeaconManager.unBind(this);
+	}
+	
+
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (iBeaconManager.isBound(this))
+			iBeaconManager.setBackgroundMode(this, true);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (iBeaconManager.isBound(this))
+			iBeaconManager.setBackgroundMode(this, false);
+	}
+
+	@Override
+	public void onIBeaconServiceConnect() {
+		iBeaconManager.setRangeNotifier(new RangeNotifier() {
+			@Override
+			public void didRangeBeaconsInRegion(Collection<IBeacon> iBeacons,
+					Region region) {
+				if (iBeacons.size() > 0) {
+					
+					if (iBeacons.iterator().next().getRssi() > -40) {
+						if (numTokens > 0 && timestamp < System.currentTimeMillis() - 10*1000) {
+							--numTokens;
+							timestamp = System.currentTimeMillis();
+
+							runOnUiThread(new Runnable() {
+								public void run() {
+									Toast.makeText(getApplicationContext(),
+											"SUCCESSFULLY PAID THE IPAD", Toast.LENGTH_LONG)
+											.show();
+
+				                    layout.setBackgroundColor(Color.GREEN);
+				                    
+									textview.setText(getResources()
+											.getQuantityString(
+													R.plurals.num_tokens_remaining,
+													numTokens,
+													numTokens));
+								}
+							});
+						}
+					}
+				}
+				
+				 for (IBeacon beacon : iBeacons) {
+					 if (beacon.getMinor() == 1) {
+						 // TODO: print something about current station
+					 }
+				 }
+				 
+				if (timestamp < System.currentTimeMillis() - 1*1000) {
+					runOnUiThread(new Runnable() {
+						public void run() {
+							layout.setBackgroundColor(Color.TRANSPARENT);
+						}
+					});
+				}
+			}
+
+		});
+
+		try {
+			iBeaconManager.startRangingBeaconsInRegion(new Region(
+					"myRangingUniqueId", null, null, null));
+		} catch (RemoteException e) {
+		}
 	}
 }

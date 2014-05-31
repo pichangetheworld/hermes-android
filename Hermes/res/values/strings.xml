@@ -2,7 +2,15 @@
 <resources>
 
     <string name="app_name">Hermes</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <plurals name="num_tokens_remaining">
+        <item quantity="zero">No tokens remaining :(</item>
+        <item quantity="one">%d token remaining.</item>
+        <item quantity="other">%d tokens remaining.</item>
+    </plurals>
+    
+    <string name="signin_with_paypal">Log in with PayPal now</string>
+    <string name="buy_tokens_now">Settings</string>
 
 </resources>

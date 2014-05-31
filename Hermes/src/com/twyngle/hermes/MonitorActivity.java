@@ -146,7 +146,7 @@ public class MonitorActivity extends Activity implements IBeaconConsumer {
 			// "myMonitoringUniqueId", null, null, null));
 
 			// Sample Simulated iBeacons
-			iBeaconManager.startMonitoringBeaconsInRegion(new Region("jayden",
+			iBeaconManager.startMonitoringBeaconsInRegion(new Region("Vendor",
 					"282F191E-D981-48EA-A887-3E27A7D12316".toLowerCase(), null,
 					null));
 			// iBeaconManager.startMonitoringBeaconsInRegion(new
