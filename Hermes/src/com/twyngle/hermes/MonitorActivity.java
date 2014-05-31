@@ -37,7 +37,7 @@ public class MonitorActivity extends Activity implements IBeaconConsumer {
 	}
 
 	public void onRangingClicked(View view) {
-		Intent myIntent = new Intent(this, RangingActivity.class);
+		Intent myIntent = new Intent(this, UseTokenActivity.class);
 		this.startActivity(myIntent);
 	}
 

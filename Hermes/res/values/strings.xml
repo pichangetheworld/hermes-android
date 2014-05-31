@@ -11,6 +11,7 @@
     </plurals>
     
     <string name="signin_with_paypal">Log in with PayPal now</string>
-    <string name="buy_tokens_now">Settings</string>
+    <string name="skip">Skip signin (REMOVE FOR FINAL)</string>
+    <string name="buy_tokens_now">Buy Tokens now</string>
 
 </resources>
