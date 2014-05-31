@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.twyngle.hermes.MonitorActivity"
+            android:name="com.twyngle.hermes.WelcomeSplashActivity"
             android:label="@string/app_name" >
             <intent-filter>
             </intent-filter>

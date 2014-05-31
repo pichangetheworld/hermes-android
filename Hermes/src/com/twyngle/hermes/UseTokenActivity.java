@@ -6,7 +6,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,23 +18,23 @@ import com.radiusnetworks.ibeacon.Region;
 
 public class UseTokenActivity extends Activity implements IBeaconConsumer {
 
-	protected static final String TAG = "RangingActivity";
-	
 	private IBeaconManager iBeaconManager = IBeaconManager
 			.getInstanceForApplication(this);
 	
 	private TextView textview;
-	private LinearLayout layout;
+	private RelativeLayout layout;
 	private static int numTokens = 200;
 	
 	private static long timestamp = -1;
+	
+	private static final String _VENDOR_UUID_ = "282F191E-D981-48EA-A887-3E27A7D12316";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tokencount);
 		
-		layout = (LinearLayout) this.findViewById(R.id.wrapper);
+		layout = (RelativeLayout) this.findViewById(R.id.wrapper);
 		textview = (TextView) this.findViewById(R.id.numTokensText);
 		textview.setText(getResources()
 				.getQuantityString(
@@ -74,9 +74,8 @@ public class UseTokenActivity extends Activity implements IBeaconConsumer {
 				if (iBeacons.size() > 0) {
 					
 					for (IBeacon beacon : iBeacons) {
-						if (beacon.getMinor() == 1) {
+						if (beacon.getMinor() == 5) {
 							// TODO: print something about current station
-							System.out.println("(pchan) rssi:" + beacon.getRssi());
 							if (beacon.getRssi() > -40) {
 								if (numTokens > 0 &&
 										timestamp < System.currentTimeMillis() - 10 * 1000) {
@@ -117,8 +116,8 @@ public class UseTokenActivity extends Activity implements IBeaconConsumer {
 		});
 
 		try {
-			iBeaconManager.startRangingBeaconsInRegion(new Region(
-					"myRangingUniqueId", null, null, null));
+			iBeaconManager.startRangingBeaconsInRegion(new Region("TTC Vendor",
+					_VENDOR_UUID_, null, null));
 		} catch (RemoteException e) {
 		}
 	}
