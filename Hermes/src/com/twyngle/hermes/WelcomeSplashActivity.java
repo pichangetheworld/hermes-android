@@ -1,19 +1,23 @@
 package com.twyngle.hermes;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 /**
  * 
  * @author pchan
  */
-public class WelcomeSplashActivity extends FragmentActivity {
-	
+public class WelcomeSplashActivity extends FragmentActivity
+		implements OnClickListener {
+
 	/**
      * The number of pages (wizard steps) to show in this demo.
      */
@@ -46,14 +50,9 @@ public class WelcomeSplashActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        if (mPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
-            super.onBackPressed();
-        } else {
-            // Otherwise, select the previous step.
-            mPager.setCurrentItem(mPager.getCurrentItem() - 1);
-        }
+		Intent intent = new Intent(this, SigninActivity.class);
+
+		startActivity(intent);
     }
 
     /**
@@ -67,7 +66,11 @@ public class WelcomeSplashActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return new ScreenSlidePageFragment();
+        	ScreenSlidePageFragment fragment = new ScreenSlidePageFragment();
+        	if (position == NUM_PAGES-1) {
+        		fragment.setOnClickListener(WelcomeSplashActivity.this);
+        	}
+            return fragment;
         }
 
         @Override
@@ -75,5 +78,12 @@ public class WelcomeSplashActivity extends FragmentActivity {
             return NUM_PAGES;
         }
     }
+
+	@Override
+	public void onClick(View view) {
+		Intent intent = new Intent(this, SigninActivity.class);
+
+		startActivity(intent);
+	}
 
 }

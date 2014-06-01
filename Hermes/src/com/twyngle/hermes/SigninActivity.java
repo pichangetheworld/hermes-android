@@ -69,16 +69,12 @@ public class SigninActivity extends Activity {
 		intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
 		startService(intent);
 
-		startActivity(new Intent(this, WelcomeSplashActivity.class));
-	}
-
-	public void onFuturePaymentPressed(View pressed) {
-		Intent intent = new Intent(SigninActivity.this,
+		Intent signinIntent = new Intent(SigninActivity.this,
 				PayPalFuturePaymentActivity.class);
 
-		startActivityForResult(intent, REQUEST_CODE_FUTURE_PAYMENT);
+		startActivityForResult(signinIntent, REQUEST_CODE_FUTURE_PAYMENT);
 	}
-	
+
 	public void onSkip(View pressed) {
 		Intent intent = new Intent(SigninActivity.this,
 				MainActivity.class);
@@ -139,10 +135,12 @@ public class SigninActivity extends Activity {
 						Log.i("FuturePaymentExample", authorization_code);
 
 						sendAuthorizationToServer(auth);
-						Toast.makeText(getApplicationContext(),
-								"Future Payment code received from PayPal",
-								Toast.LENGTH_LONG).show();
+//						Toast.makeText(getApplicationContext(),
+//								"Future Payment code received from PayPal",
+//								Toast.LENGTH_LONG).show();
 
+						Intent intent = new Intent(this, MainActivity.class);
+						startActivity(intent);
 					} catch (JSONException e) {
 						Log.e("FuturePaymentExample",
 								"an extremely unlikely failure occurred: ", e);
@@ -183,7 +181,7 @@ public class SigninActivity extends Activity {
 					@Override
 					public void onSuccess(String response) {
 						// This should be a stringified Json object
-						System.out.println(response);
+						System.out.println("(pchan)" + response);
 					}
 				});
 

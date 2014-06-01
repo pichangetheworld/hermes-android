@@ -4,8 +4,11 @@ import java.util.Collection;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +24,6 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 			.getInstanceForApplication(this);
 	
 	private TextView textview;
-//	private RelativeLayout layout;
 	private static int numTokens = 20;
 	private static int numMonthlyPass = 0;
 	
@@ -37,7 +39,6 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 		ActionBar actionBar = getActionBar();
 		actionBar.hide();
 		
-//		layout = (RelativeLayout) this.findViewById(R.id.wrapper);
 		textview = (TextView) this.findViewById(R.id.numTokensText);
 		textview.setText(
 				String.format(getResources().getString(R.string.count), numTokens));
@@ -65,6 +66,24 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 		super.onResume();
 		if (iBeaconManager.isBound(this))
 			iBeaconManager.setBackgroundMode(this, false);
+		
+		if (timestamp > System.currentTimeMillis() - 15 * 1000) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					TextView ready = (TextView) MainActivity.this
+							.findViewById(R.id.readynow);
+					ready.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							Intent intent = new Intent(MainActivity.this,
+									TicketInfoActivity.class);
+							startActivity(intent);
+						}
+					});
+					ready.setText("Open ticket");
+				}
+			});
+		}
 	}
 
 	@Override
@@ -74,27 +93,41 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 			public void didRangeBeaconsInRegion(Collection<IBeacon> iBeacons,
 					Region region) {
 				if (iBeacons.size() > 0) {
-					
+					System.out.println("(pchan) last time was " + timestamp + " now:" + System.currentTimeMillis());
+					boolean launch = false;
 					for (IBeacon beacon : iBeacons) {
 						if (beacon.getMinor() == 5) {
-							// TODO: print something about current station
 							if (beacon.getRssi() > -40) {
 								if (numTokens > 0 &&
-										timestamp < System.currentTimeMillis() - 10 * 1000) {
+										timestamp < System.currentTimeMillis() - 15 * 1000) {
 									--numTokens;
 									timestamp = System.currentTimeMillis();
+									launch = true;
 
 									runOnUiThread(new Runnable() {
 										public void run() {
 											Toast.makeText(
 													getApplicationContext(),
-													"SUCCESSFULLY PAID THE IPAD",
+													"Successfully paid the TTC!",
 													Toast.LENGTH_LONG).show();
-
-//											layout.setBackgroundColor(Color.GREEN);
 
 											textview.setText(
 													String.format(getResources().getString(R.string.count), numTokens));
+										}
+									});
+								} else if (timestamp > System.currentTimeMillis() - 15 * 1000) {
+									runOnUiThread(new Runnable() {
+										public void run() {
+											TextView ready = (TextView) MainActivity.this.findViewById(R.id.readynow);
+											ready.setOnClickListener(new OnClickListener() {
+													@Override
+													public void onClick(View v) {
+														Intent intent = new Intent(MainActivity.this,
+																TicketInfoActivity.class);
+														startActivity(intent);
+													}
+												});
+											ready.setText("Open ticket");
 										}
 									});
 								}
@@ -102,14 +135,12 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 							break;
 						}
 					}
-				}
-				 
-				if (timestamp < System.currentTimeMillis() - 1*1000) {
-					runOnUiThread(new Runnable() {
-						public void run() {
-//							layout.setBackgroundColor(Color.TRANSPARENT);
-						}
-					});
+					
+					if (launch) {
+						Intent intent = new Intent(MainActivity.this,
+								TicketInfoActivity.class);
+						startActivity(intent);
+					}
 				}
 			}
 		});
@@ -120,4 +151,9 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 		} catch (RemoteException e) {
 		}
 	}
+
+	public void buyMoreTokens(View view) {
+		startActivity(new Intent(this, BuyMoreActivity.class));
+	}
+
 }

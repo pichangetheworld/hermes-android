@@ -3,16 +3,26 @@
 
     <string name="app_name">Hermes</string>
     <string name="action_settings">Settings</string>
-
     <string name="hermes_welcome">HERMES. Get moving.</string>
     <string name="city_name">TORONTO</string>
-
     <string name="signin_with_paypal">Log in with PayPal now</string>
     <string name="skip">Skip signin (REMOVE FOR FINAL)</string>
     <string name="buy_tokens_now">Buy Tokens now</string>
-    
     <string name="tokens">Tokens</string>
-    <string name="count">x%-4d</string>
+    <string name="count">x%1$d</string>
+    <string name="buycost">$%1$.2f</string>
     <string name="monthly_pass">June Monthly Pass</string>
-    
+    <string name="ready_now">Ready to Pay</string>
+    <string name="donate_forward">Donate a ride</string>
+    <string name="total">Total</string>
+    <string name="pay_with_paypal">Pay with PayPal</string>
+    <string name="done">DONE</string>
+    <string name="close">X</string>
+    <string name="checkout">CHECKOUT</string>
+    <string name="station1">KING</string>
+    <string name="station2">QUEEN\'S PARK</string>
+    <string name="date">June 1, 2014</string>
+    <string name="timein">11:45am</string>
+    <string name="timeout">2:45pm</string>
+
 </resources>

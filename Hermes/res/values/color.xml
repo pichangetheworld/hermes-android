@@ -3,4 +3,6 @@
     <color name="white">#FFFFFF</color>
     <color name="red">#EB4A33</color>
     <color name="darkblue">#22282F</color>
+    <color name="lightblue">#E9F0F5</color>
+    <color name="paypalblue">#32658C</color>
 </resources>

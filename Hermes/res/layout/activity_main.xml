@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/red"
@@ -17,14 +17,14 @@
             android:id="@+id/hamburger"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_centerVertical="true"
             android:contentDescription="@string/app_name"
             android:src="@drawable/hamburger" />
 
         <ImageView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_centerInParent="true"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
             android:src="@drawable/logo" />
@@ -33,10 +33,13 @@
             android:id="@+id/plus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
             android:contentDescription="@string/app_name"
+            android:onClick="buyMoreTokens"
             android:src="@drawable/plus" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -149,6 +152,16 @@
                 android:textColor="@color/white"
                 android:textSize="24sp" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/readynow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/ready_now"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
     </RelativeLayout>
 
 </LinearLayout>
