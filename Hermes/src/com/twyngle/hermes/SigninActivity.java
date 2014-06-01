@@ -2,6 +2,7 @@ package com.twyngle.hermes;
 
 import org.json.JSONException;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -59,11 +60,16 @@ public class SigninActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		
+		setContentView(R.layout.activity_signin);
+
+		ActionBar actionBar = getActionBar();
+		actionBar.hide();
+
 		Intent intent = new Intent(this, PayPalService.class);
 		intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
 		startService(intent);
+
+		startActivity(new Intent(this, WelcomeSplashActivity.class));
 	}
 
 	public void onFuturePaymentPressed(View pressed) {
@@ -75,7 +81,7 @@ public class SigninActivity extends Activity {
 	
 	public void onSkip(View pressed) {
 		Intent intent = new Intent(SigninActivity.this,
-				UseTokenActivity.class);
+				MainActivity.class);
 
 		startActivityForResult(intent, REQUEST_CODE_SKIP);
 	}

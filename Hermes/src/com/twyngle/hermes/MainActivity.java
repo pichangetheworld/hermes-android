@@ -2,11 +2,10 @@ package com.twyngle.hermes;
 
 import java.util.Collection;
 
+import android.app.ActionBar;
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,14 +15,15 @@ import com.radiusnetworks.ibeacon.IBeaconManager;
 import com.radiusnetworks.ibeacon.RangeNotifier;
 import com.radiusnetworks.ibeacon.Region;
 
-public class UseTokenActivity extends Activity implements IBeaconConsumer {
+public class MainActivity extends Activity implements IBeaconConsumer {
 
 	private IBeaconManager iBeaconManager = IBeaconManager
 			.getInstanceForApplication(this);
 	
 	private TextView textview;
-	private RelativeLayout layout;
-	private static int numTokens = 200;
+//	private RelativeLayout layout;
+	private static int numTokens = 20;
+	private static int numMonthlyPass = 0;
 	
 	private static long timestamp = -1;
 	
@@ -32,15 +32,17 @@ public class UseTokenActivity extends Activity implements IBeaconConsumer {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_tokencount);
+		setContentView(R.layout.activity_main);
 		
-		layout = (RelativeLayout) this.findViewById(R.id.wrapper);
+		ActionBar actionBar = getActionBar();
+		actionBar.hide();
+		
+//		layout = (RelativeLayout) this.findViewById(R.id.wrapper);
 		textview = (TextView) this.findViewById(R.id.numTokensText);
-		textview.setText(getResources()
-				.getQuantityString(
-						R.plurals.num_tokens_remaining,
-						numTokens,
-						numTokens));
+		textview.setText(
+				String.format(getResources().getString(R.string.count), numTokens));
+		((TextView) this.findViewById(R.id.numMonthlyPass)).setText(
+				String.format(getResources().getString(R.string.count), numMonthlyPass));
 
 		iBeaconManager.bind(this);
 	}
@@ -89,13 +91,10 @@ public class UseTokenActivity extends Activity implements IBeaconConsumer {
 													"SUCCESSFULLY PAID THE IPAD",
 													Toast.LENGTH_LONG).show();
 
-											layout.setBackgroundColor(Color.GREEN);
+//											layout.setBackgroundColor(Color.GREEN);
 
-											textview.setText(getResources()
-													.getQuantityString(
-															R.plurals.num_tokens_remaining,
-															numTokens,
-															numTokens));
+											textview.setText(
+													String.format(getResources().getString(R.string.count), numTokens));
 										}
 									});
 								}
@@ -108,7 +107,7 @@ public class UseTokenActivity extends Activity implements IBeaconConsumer {
 				if (timestamp < System.currentTimeMillis() - 1*1000) {
 					runOnUiThread(new Runnable() {
 						public void run() {
-							layout.setBackgroundColor(Color.TRANSPARENT);
+//							layout.setBackgroundColor(Color.TRANSPARENT);
 						}
 					});
 				}
