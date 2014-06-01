@@ -159,11 +159,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:padding="10dp"
             android:background="@color/paypalblue"
+            android:onClick="onBuy"
+            android:padding="10dp"
             android:text="@string/pay_with_paypal"
-            android:textColor="@color/white"
-            android:onClick="onBuy" />
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/imageView1"
@@ -176,6 +176,84 @@
             android:contentDescription="@string/app_name"
             android:src="@drawable/coin" />
 
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView1"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/radioButton0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/none" />
+
+            <RadioButton
+                android:id="@+id/radioButton1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/one" />
+
+            <RadioButton
+                android:id="@+id/radioButton5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/five" />
+
+            <RadioButton
+                android:id="@+id/radioButton10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ten" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/buytickets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView2"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/ticketsNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/no" />
+
+            <RadioButton
+                android:id="@+id/ticketsYes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yes" />
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/buyforward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView3"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/forwardNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/no" />
+
+            <RadioButton
+                android:id="@+id/forwardYes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yes" />
+        </RadioGroup>
     </RelativeLayout>
 
 </LinearLayout>

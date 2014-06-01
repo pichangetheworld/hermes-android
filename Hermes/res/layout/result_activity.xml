@@ -76,6 +76,29 @@
             android:text="@string/station2"
             android:textSize="24sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nextTrainDirection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="46dp"
+            android:layout_toRightOf="@+id/timeIn"
+            android:text="@string/next_train_direction"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nextTrain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="22dp"
+            android:layout_toRightOf="@+id/timeIn"
+            android:text="@string/timein"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
     </RelativeLayout>
 
 </LinearLayout>

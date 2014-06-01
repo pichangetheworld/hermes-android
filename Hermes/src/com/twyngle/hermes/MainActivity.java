@@ -5,6 +5,7 @@ import java.util.Collection;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.view.View;
@@ -39,6 +40,21 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 		ActionBar actionBar = getActionBar();
 		actionBar.hide();
 		
+
+		SharedPreferences prefs = getSharedPreferences("hermes", MODE_PRIVATE);
+		int t = prefs.getInt("numTokens", -1);
+		if (t >= 0) {
+			numTokens = t;
+		} else {
+			numTokens = 12;
+		}
+		long last = prefs.getLong("lastTimestamp", -1);
+		if (last >= 0) {
+			timestamp = t;
+		} else {
+			timestamp = -1;
+		}
+		
 		textview = (TextView) this.findViewById(R.id.numTokensText);
 		textview.setText(
 				String.format(getResources().getString(R.string.count), numTokens));
@@ -67,7 +83,23 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 		if (iBeaconManager.isBound(this))
 			iBeaconManager.setBackgroundMode(this, false);
 		
-		if (timestamp > System.currentTimeMillis() - 15 * 1000) {
+		SharedPreferences prefs = getSharedPreferences("hermes", MODE_PRIVATE);
+		int t = prefs.getInt("numTokens", -1);
+		if (t >= 0) {
+			numTokens = t;
+		} else {
+			numTokens = 12;
+		}
+		
+		runOnUiThread(new Runnable() {
+			public void run() {
+				textview = (TextView) MainActivity.this.findViewById(R.id.numTokensText);
+				textview.setText(
+						String.format(getResources().getString(R.string.count), numTokens));
+			}
+		});
+		
+		if (timestamp > System.currentTimeMillis() - 10 * 1000) {
 			runOnUiThread(new Runnable() {
 				public void run() {
 					TextView ready = (TextView) MainActivity.this
@@ -80,7 +112,15 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 							startActivity(intent);
 						}
 					});
-					ready.setText("Open ticket");
+					ready.setText(getResources().getString(R.string.current_receipt));
+				}
+			});
+		} else {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					TextView ready = (TextView) MainActivity.this
+							.findViewById(R.id.readynow);
+					ready.setText(getResources().getString(R.string.ready_now));
 				}
 			});
 		}
@@ -93,7 +133,6 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 			public void didRangeBeaconsInRegion(Collection<IBeacon> iBeacons,
 					Region region) {
 				if (iBeacons.size() > 0) {
-					System.out.println("(pchan) last time was " + timestamp + " now:" + System.currentTimeMillis());
 					boolean launch = false;
 					for (IBeacon beacon : iBeacons) {
 						if (beacon.getMinor() == 5) {
@@ -101,7 +140,14 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 								if (numTokens > 0 &&
 										timestamp < System.currentTimeMillis() - 15 * 1000) {
 									--numTokens;
+
 									timestamp = System.currentTimeMillis();
+					        		SharedPreferences prefs = getSharedPreferences("hermes", MODE_PRIVATE);
+					        		prefs.edit()
+						        		.putInt("numTokens", numTokens)
+						        		.putLong("lastTimestamp", timestamp)
+						        		.commit();
+
 									launch = true;
 
 									runOnUiThread(new Runnable() {
@@ -115,7 +161,7 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 													String.format(getResources().getString(R.string.count), numTokens));
 										}
 									});
-								} else if (timestamp > System.currentTimeMillis() - 15 * 1000) {
+								} else if (timestamp > System.currentTimeMillis() - 5 * 1000) {
 									runOnUiThread(new Runnable() {
 										public void run() {
 											TextView ready = (TextView) MainActivity.this.findViewById(R.id.readynow);
@@ -127,7 +173,7 @@ public class MainActivity extends Activity implements IBeaconConsumer {
 														startActivity(intent);
 													}
 												});
-											ready.setText("Open ticket");
+											ready.setText(getResources().getString(R.string.ready_now));
 										}
 									});
 								}

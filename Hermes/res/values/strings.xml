@@ -13,6 +13,7 @@
     <string name="buycost">$%1$.2f</string>
     <string name="monthly_pass">June Monthly Pass</string>
     <string name="ready_now">Ready to Pay</string>
+    <string name="current_receipt">View Current Receipt</string>
     <string name="donate_forward">Donate a ride</string>
     <string name="total">Total</string>
     <string name="pay_with_paypal">Pay with PayPal</string>
@@ -24,5 +25,15 @@
     <string name="date">June 1, 2014</string>
     <string name="timein">11:45am</string>
     <string name="timeout">2:45pm</string>
+    
+    <string name="none">None</string>
+    <string name="one">1</string>
+    <string name="five">5</string>
+    <string name="ten">10</string>
+    
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    
+    <string name="next_train_direction">Northbound</string>
 
 </resources>

@@ -7,9 +7,12 @@ import org.json.JSONException;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,10 +32,14 @@ public class BuyMoreActivity extends Activity {
 	private static TextView donateCost;
 	private static TextView totalCost;
 
-	private static int tokensToBuy = 1;
+	private static int tokensToBuy;
 	private static int buyMonthlyPass = 0;
 	private static int buyForward = 0;
 	private static double total = 0;
+	
+	private static RadioGroup tokenCountGroup;
+	private static RadioGroup ticketCountGroup;
+	private static RadioGroup forwardCountGroup;
 
 	private static PayPalConfiguration config = new PayPalConfiguration()
 			.environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
@@ -45,31 +52,74 @@ public class BuyMoreActivity extends Activity {
 		ActionBar actionBar = getActionBar();
 		actionBar.hide();
 
+		tokenCountGroup = (RadioGroup) this.findViewById(R.id.radioGroup1);
+		ticketCountGroup = (RadioGroup) this.findViewById(R.id.buytickets);
+		forwardCountGroup = (RadioGroup) this.findViewById(R.id.buyforward);
+		OnCheckedChangeListener listener = new OnCheckedChangeListener() 
+	    {
+	        public void onCheckedChanged(RadioGroup group, int checkedId) {
+	    		updateTotal();
+	        }
+	    };
+		tokenCountGroup.setOnCheckedChangeListener(listener);
+		ticketCountGroup.setOnCheckedChangeListener(listener);
+		forwardCountGroup.setOnCheckedChangeListener(listener);
 		tokenCost = (TextView) this.findViewById(R.id.costTokens);
+		ticketCost = (TextView) this.findViewById(R.id.costTickets);
+		donateCost = (TextView) this.findViewById(R.id.costDonateForward);
+		totalCost = (TextView) this.findViewById(R.id.costTotal);
+
+		updateTotal();
+		
+		Intent intent = new Intent(this, PayPalService.class);
+		intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+		startService(intent);
+	}
+	
+	private int buttonIdToIndex(int buttonId) {
+		switch (buttonId) {
+		case R.id.radioButton0:
+			return 0;
+		case R.id.radioButton1:
+			return 1;
+		case R.id.radioButton5:
+			return 2;
+		case R.id.radioButton10:
+			return 3;
+		case R.id.ticketsNo:
+			return 0;
+		case R.id.ticketsYes:
+			return 1;
+		case R.id.forwardNo:
+			return 0;
+		case R.id.forwardYes:
+			return 1;
+		default:
+			return 1;
+		}
+	}
+	
+	private void updateTotal() {
+		tokensToBuy = buttonIdToIndex(tokenCountGroup.getCheckedRadioButtonId());
+		buyMonthlyPass = buttonIdToIndex(ticketCountGroup.getCheckedRadioButtonId());
+		buyForward = buttonIdToIndex(forwardCountGroup.getCheckedRadioButtonId());
+
 		tokenCost.setText(String.format(
 				getResources().getString(R.string.buycost),
 				TOKEN_BULK_COSTS[tokensToBuy]));
 
-		ticketCost = (TextView) this.findViewById(R.id.costTickets);
 		ticketCost.setText(String.format(
 				getResources().getString(R.string.buycost),
 				133.75 * buyMonthlyPass));
 
-		donateCost = (TextView) this.findViewById(R.id.costDonateForward);
 		donateCost.setText(String.format(
 				getResources().getString(R.string.buycost), 3.0 * buyForward));
 
-		totalCost = (TextView) this.findViewById(R.id.costTotal);
 		total = TOKEN_BULK_COSTS[tokensToBuy] + 133.75 * buyMonthlyPass + 3.0
 				* buyForward;
 		totalCost.setText(String.format(
 				getResources().getString(R.string.buycost),
 				total));
-
-		Intent intent = new Intent(this, PayPalService.class);
-		intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-		startService(intent);
-
 	}
 
 	@Override
@@ -110,6 +160,11 @@ public class BuyMoreActivity extends Activity {
 	                // see https://developer.paypal.com/webapps/developer/docs/integration/mobile/verify-mobile-payment/
 	                // for more details.
 
+	        		SharedPreferences prefs = getSharedPreferences("hermes", MODE_PRIVATE);
+	        		int t = prefs.getInt("numTokens", 0);
+	        		prefs.edit().putInt("numTokens", t + tokensToBuy).commit();
+	        		System.out.println("pchan: had " + t + " tokens now have " + (t + tokensToBuy));
+	                
 	        		onBackPressed();
 	        		
 	        		runOnUiThread(new Runnable() {
