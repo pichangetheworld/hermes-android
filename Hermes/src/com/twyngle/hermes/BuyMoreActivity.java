@@ -24,6 +24,7 @@ import com.paypal.android.sdk.payments.PaymentConfirmation;
 
 public class BuyMoreActivity extends Activity {
 
+	private static final int TOKEN_BULK_AMOUNT[] = { 0, 1, 5, 10 };
 	private static final double TOKEN_BULK_COSTS[] = { 0, 3, 13.5, 27 };
 	private static final String _CLIENT_ID_ = "AZ0I8hD-o3xE9MN-MpiWQ_0r8LLsunv1DUboaohZHoCN9Hx0hgS7n5RSfBZn";
 	
@@ -162,7 +163,7 @@ public class BuyMoreActivity extends Activity {
 
 	        		SharedPreferences prefs = getSharedPreferences("hermes", MODE_PRIVATE);
 	        		int t = prefs.getInt("numTokens", 0);
-	        		prefs.edit().putInt("numTokens", t + tokensToBuy).commit();
+	        		prefs.edit().putInt("numTokens", t + TOKEN_BULK_AMOUNT[tokensToBuy]).commit();
 	        		System.out.println("pchan: had " + t + " tokens now have " + (t + tokensToBuy));
 	                
 	        		onBackPressed();

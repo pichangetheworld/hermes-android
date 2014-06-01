@@ -47,17 +47,6 @@
         android:padding="10dp" >
 
         <TextView
-            android:id="@+id/costTokens"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textView2"
-            android:layout_alignBottom="@+id/textView2"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="22dp"
-            android:text="@string/buycost"
-            android:textSize="24sp" />
-
-        <TextView
             android:id="@+id/textView2"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
@@ -75,7 +64,9 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/textView3"
             android:layout_alignLeft="@+id/costTokens"
+            android:layout_alignRight="@+id/costTokens"
             android:layout_marginBottom="13dp"
+            android:gravity="right"
             android:text="@string/buycost"
             android:textSize="24sp" />
 
@@ -101,22 +92,14 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/costDonateForward"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textView4"
-            android:layout_alignBottom="@+id/textView4"
-            android:layout_alignLeft="@+id/costTickets"
-            android:text="@string/buycost"
-            android:textSize="24sp" />
-
-        <TextView
             android:id="@+id/costTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/total"
             android:layout_alignBottom="@+id/total"
             android:layout_alignLeft="@+id/costTickets"
+            android:layout_alignRight="@+id/buyWithPaypal"
+            android:gravity="right"
             android:text="@string/buycost"
             android:textSize="24sp" />
 
@@ -254,6 +237,31 @@
                 android:layout_height="wrap_content"
                 android:text="@string/yes" />
         </RadioGroup>
+
+        <TextView
+            android:id="@+id/costDonateForward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textView4"
+            android:layout_alignBottom="@+id/textView4"
+            android:layout_alignLeft="@+id/costTotal"
+            android:layout_alignRight="@+id/costTickets"
+            android:gravity="right"
+            android:text="@string/buycost"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/costTokens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textView2"
+            android:layout_alignBottom="@+id/textView2"
+            android:layout_alignRight="@+id/buyWithPaypal"
+            android:layout_toRightOf="@+id/buytickets"
+            android:gravity="right"
+            android:text="@string/buycost"
+            android:textSize="24sp" />
+
     </RelativeLayout>
 
 </LinearLayout>

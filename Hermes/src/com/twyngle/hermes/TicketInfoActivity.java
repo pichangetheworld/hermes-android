@@ -33,7 +33,7 @@ public class TicketInfoActivity extends Activity {
 		}
 
 		TextView timeIn = (TextView) this.findViewById(R.id.timeIn);
-		timeIn.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault())
+		timeIn.setText(new SimpleDateFormat("h:mm a", Locale.getDefault())
 			.format(new Date(last)));
 		
 		TextView timeOut = (TextView) this.findViewById(R.id.timeOut);
